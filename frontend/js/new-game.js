@@ -63,6 +63,7 @@ function addPlayerRow() {
   playerSelect.className = 'form-control';
   playerSelect.innerHTML = `<option value="">— Player —</option>` +
     allPlayers.map(p => `<option value="${p.id}">${p.name}${p.is_main ? ' ★' : ''}</option>`).join('');
+  playerSelect.addEventListener('change', populateAssassinDropdown);
 
   const roleSelect = document.createElement('select');
   roleSelect.className = 'form-control';
@@ -73,12 +74,13 @@ function addPlayerRow() {
     <optgroup label="Evil">
       ${EVIL_ROLES.map(r => `<option value="${r}">${r}</option>`).join('')}
     </optgroup>`;
+  roleSelect.addEventListener('change', populateAssassinDropdown);
 
   const removeBtn = document.createElement('button');
   removeBtn.type = 'button';
   removeBtn.className = 'remove-row';
   removeBtn.textContent = '×';
-  removeBtn.onclick = () => { row.remove(); };
+  removeBtn.onclick = () => { row.remove(); populateAssassinDropdown(); };
 
   row.appendChild(playerSelect);
   row.appendChild(roleSelect);
