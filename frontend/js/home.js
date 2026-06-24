@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (games.length === 0) {
       grid.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state__icon">🏰</div>
           <div class="empty-state__text">No games yet. Add your first game!</div>
         </div>`;
       return;
@@ -59,7 +58,7 @@ function renderCard(game) {
   const winnerLabel = game.winning_team === 'good' ? 'Good wins' : 'Evil wins';
 
   return `
-    <a href="/game.html?id=${game.id}" class="game-card">
+    <a href="/game.html?id=${game.id}" class="game-card game-card--${iWon ? 'win' : 'loss'}">
       <div class="game-card__result game-card__result--${iWon ? 'win' : 'loss'}">
         ${iWon ? 'WIN' : 'LOSS'}
       </div>
@@ -123,7 +122,7 @@ async function submitPasscode() {
 
 function showAddButton() {
   document.getElementById('add-game-btn').classList.remove('hidden');
-  document.getElementById('auth-btn').textContent = '🔓';
+  document.getElementById('auth-btn').textContent = 'Unlocked';
 }
 
 // Close modal on overlay click

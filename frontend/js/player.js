@@ -51,9 +51,8 @@ function renderPlayer(player) {
   });
 
   const authed = isAuthed();
-  console.log('[player.js] isAuthed:', authed, '| passcode:', getPasscode());
   const editBtn = authed
-    ? `<button class="btn btn-ghost btn-sm" onclick="openEditModal()" style="margin-left:12px;">✏️ Edit</button>`
+    ? `<button class="btn btn-ghost btn-sm" onclick="openEditModal()" style="margin-left:12px;">Edit</button>`
     : '';
 
   content.innerHTML = `

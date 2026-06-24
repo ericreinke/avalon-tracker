@@ -27,8 +27,8 @@ function renderGame(game) {
   // Winning banner
   const bannerClass = game.winning_team === 'good' ? 'win-banner--good' : 'win-banner--evil';
   const bannerText = game.winning_team === 'good'
-    ? '🛡️ Good Team Wins!'
-    : '🗡️ Evil Team Wins!';
+    ? 'Good Team Wins!'
+    : 'Evil Team Wins!';
 
   // Missions
   const missionsHtml = game.missions.map((m, i) => {
@@ -46,11 +46,11 @@ function renderGame(game) {
     const teamLabel = GOOD_ROLES.includes(p.role) ? 'Good' : 'Evil';
     const extra = [];
     if (game.assassinated_id && p.player_id === game.assassinated_id) {
-      extra.push(' 🎯');
+      extra.push(' <span style="font-size:0.75rem; color:var(--text-muted);">(Assassinated)</span>');
     }
     // Check if this player is Merlin
     if (p.role === 'Merlin') {
-      extra.push(' 👁️');
+      extra.push(' <span style="font-size:0.75rem; color:var(--text-muted);">(Merlin)</span>');
     }
     return `<tr>
       <td><a href="/player.html?id=${p.player_id}">${p.player_name}</a>${extra.join('')}</td>
@@ -67,7 +67,7 @@ function renderGame(game) {
     const wasCorrect = merlinEntry && merlinEntry.player_id === game.assassinated_id;
     assassinHtml = `
       <div class="detail-section">
-        <h2>🗡️ Assassination</h2>
+        <h2>Assassination</h2>
         <p>The Assassin targeted <strong class="text-evil">${game.assassinated_name}</strong>.</p>
         <p>Merlin was <strong class="text-good">${merlinName}</strong>.</p>
         <p style="margin-top:8px;">${wasCorrect
@@ -82,7 +82,7 @@ function renderGame(game) {
   if (game.notes) {
     notesHtml = `
       <div class="detail-section">
-        <h2>📝 Notes</h2>
+        <h2>Notes</h2>
         <p>${game.notes}</p>
       </div>`;
   }
@@ -106,7 +106,6 @@ function renderGame(game) {
         <thead><tr><th>Player</th><th>Role</th><th>Team</th></tr></thead>
         <tbody>${rosterRows}</tbody>
       </table>
-      <p style="margin-top:12px; font-size:0.75rem; color:var(--text-muted);">🎯 = Assassinated &nbsp; 👁️ = Merlin</p>
     </div>
 
     ${assassinHtml}
