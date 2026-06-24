@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Manage Avalon players — view, create, and edit player profiles.">
+  <title>Players — Avalon Tracker</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="container">
+      <a href="/" class="topbar-logo">⚔ Avalon Tracker</a>
+      <div class="topbar-actions">
+        <a href="/" class="btn btn-ghost btn-sm">Home</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Players</h1>
+      <p>View profiles or manage the player roster.</p>
+    </div>
+
+    <!-- Add player (only when authed) -->
+    <div id="add-player-section" class="detail-section hidden">
+      <h2>Add Player</h2>
+      <div class="inline-form">
+        <input type="text" id="new-player-name" class="form-control" placeholder="Player name…">
+        <button class="btn btn-primary btn-sm" onclick="createPlayer()">Add</button>
+      </div>
+      <span id="add-error" class="text-evil" style="font-size:0.8rem;"></span>
+    </div>
+
+    <!-- Player list -->
+    <div id="player-list" class="player-list">
+      <div class="loading">Loading players</div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (isAuthed()) {
+        document.getElementById('add-player-section').classList.remove('hidden');
+      }
+      await loadPlayers();
+    });
+
+    async function loadPlayers() {
+      try {
+        const players = await apiGet('/api/players');
+        const list = document.getElementById('player-list');
+        if (players.length === 0) {
+          list.innerHTML = '<div class="empty-state"><div class="empty-state__text">No players yet.</div></div>';
+          return;
+        }
+        list.innerHTML = players.map(p => `
+          <a href="/player.html?id=${p.id}" class="player-link">
+            <span class="player-link__name">${p.name}${p.is_main ? ' ★' : ''}</span>
+            <span class="player-link__arrow">→</span>
+          </a>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function createPlayer() {
+      const nameInput = document.getElementById('new-player-name');
+      const errorSpan = document.getElementById('add-error');
+      errorSpan.textContent = '';
+
+      const name = nameInput.value.trim();
+      if (!name) { errorSpan.textContent = 'Name is required.'; return; }
+
+      try {
+        await apiPost('/api/players', { name });
+        nameInput.value = '';
+        await loadPlayers();
+      } catch (err) {
+        errorSpan.textContent = err.message;
+      }
+    }
+
+    // Enter key support
+    document.getElementById('new-player-name').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') createPlayer();
+    });
+  </script>
+</body>
+</html>

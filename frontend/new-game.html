@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Log a new Avalon game with players, roles, and mission results.">
+  <title>New Game — Avalon Tracker</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="container">
+      <a href="/" class="topbar-logo">⚔ Avalon Tracker</a>
+      <div class="topbar-actions">
+        <a href="/" class="btn btn-ghost btn-sm">← Cancel</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Log New Game</h1>
+      <p>Record the players, roles, and mission outcomes.</p>
+    </div>
+
+    <form id="game-form" onsubmit="return false;">
+
+      <!-- Missions -->
+      <div class="detail-section">
+        <h2>Missions</h2>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Click to cycle: grey → blue (success) → red (fail) → grey</p>
+        <div class="mission-toggles" id="mission-toggles">
+          <button type="button" class="mission-toggle" data-index="0" data-state="none" onclick="cycleMission(this)">
+            M1<span>N/A</span>
+          </button>
+          <button type="button" class="mission-toggle" data-index="1" data-state="none" onclick="cycleMission(this)">
+            M2<span>N/A</span>
+          </button>
+          <button type="button" class="mission-toggle" data-index="2" data-state="none" onclick="cycleMission(this)">
+            M3<span>N/A</span>
+          </button>
+          <button type="button" class="mission-toggle" data-index="3" data-state="none" onclick="cycleMission(this)">
+            M4<span>N/A</span>
+          </button>
+          <button type="button" class="mission-toggle" data-index="4" data-state="none" onclick="cycleMission(this)">
+            M5<span>N/A</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Players -->
+      <div class="detail-section">
+        <h2>Players &amp; Roles</h2>
+        <div class="player-rows" id="player-rows"></div>
+        <button type="button" class="btn btn-ghost btn-sm mt-16" onclick="addPlayerRow()">＋ Add Player</button>
+      </div>
+
+      <!-- Assassination (conditionally visible) -->
+      <div class="detail-section hidden" id="assassin-section">
+        <h2>🗡️ Assassination</h2>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Good won the missions. Who did the evil team assassinate?</p>
+        <div class="form-group">
+          <label for="assassinated">Assassinated Player</label>
+          <select id="assassinated" class="form-control">
+            <option value="">— Select —</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="detail-section">
+        <h2>Notes (optional)</h2>
+        <textarea id="notes" class="form-control" placeholder="Any notes about this game…"></textarea>
+      </div>
+
+      <!-- Submit -->
+      <div style="padding: 16px 0 48px;">
+        <button type="button" class="btn btn-primary" onclick="submitGame()" id="submit-btn">Save Game</button>
+        <span id="submit-error" class="text-evil" style="margin-left:12px; font-size:0.85rem;"></span>
+      </div>
+
+    </form>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/new-game.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Track your Avalon board game results, wins, and player statistics.">
+  <title>Avalon Tracker</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="container">
+      <a href="/" class="topbar-logo">⚔ Avalon Tracker</a>
+      <div class="topbar-actions">
+        <a href="/players.html" class="btn btn-ghost btn-sm">Players</a>
+        <button id="auth-btn" class="btn btn-ghost btn-sm" onclick="openAuthModal()">🔒</button>
+        <a id="add-game-btn" href="/new-game.html" class="btn btn-primary btn-sm hidden">＋ Add Game</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Auth Modal -->
+  <div id="auth-modal" class="modal-overlay">
+    <div class="modal">
+      <h3>Enter Passcode</h3>
+      <input type="password" id="passcode-input" maxlength="20" placeholder="••••" autofocus>
+      <button class="btn btn-primary" onclick="submitPasscode()">Unlock</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <main class="container">
+    <div class="page-header">
+      <h1>Game History</h1>
+      <p id="subtitle">Loading…</p>
+    </div>
+    <div id="game-grid" class="game-grid">
+      <div class="loading">Loading games</div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/home.js"></script>
+</body>
+</html>
