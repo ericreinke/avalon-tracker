@@ -97,16 +97,20 @@ def create_game(data: GameCreate, db: Session = Depends(get_db)):
     else:
         raise HTTPException(400, "At least 3 missions must have resolved (success or fail)")
 
-    game = Game(
-        num_players=data.num_players,
-        mission_1=missions[0],
-        mission_2=missions[1],
-        mission_3=missions[2],
-        mission_4=missions[3],
-        mission_5=missions[4],
-        winning_team=winning_team,
-        notes=data.notes,
-    )
+    game_kwargs = {
+        "num_players": data.num_players,
+        "mission_1": missions[0],
+        "mission_2": missions[1],
+        "mission_3": missions[2],
+        "mission_4": missions[3],
+        "mission_5": missions[4],
+        "winning_team": winning_team,
+        "notes": data.notes,
+    }
+    if data.created_at:
+        game_kwargs["created_at"] = data.created_at
+
+    game = Game(**game_kwargs)
     db.add(game)
     db.flush()  # get game.id
 

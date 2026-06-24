@@ -47,6 +47,7 @@ class GameCreate(BaseModel):
     num_players: int
     missions: list[Optional[str]]  # length 5, each "success" / "fail" / null
     players: list[GamePlayerIn]
+    created_at: Optional[datetime] = None
     notes: Optional[str] = None
 
 class GamePlayerOut(BaseModel):

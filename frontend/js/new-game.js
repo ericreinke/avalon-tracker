@@ -15,6 +15,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load players:', err);
   }
 
+  // Set default date to today in local time
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  document.getElementById('date-played').value = `${yyyy}-${mm}-${dd}`;
+
   // Start with 5 empty rows
   for (let i = 0; i < 5; i++) addPlayerRow();
 });
@@ -163,10 +170,18 @@ async function submitGame() {
     p.is_assassinated = (p.player_id === assassinated_player_id);
   }
 
+  // Parse date correctly as ISO string (adding a fake time so it parses as midnight UTC or local properly)
+  const dateStr = document.getElementById('date-played').value;
+  let created_at = null;
+  if (dateStr) {
+    created_at = new Date(`${dateStr}T12:00:00Z`).toISOString();
+  }
+
   const body = {
     num_players: players.length,
     missions,
     players,
+    created_at,
     notes: document.getElementById('notes').value.trim() || null,
   };
 
