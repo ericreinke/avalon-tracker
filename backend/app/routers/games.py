@@ -48,7 +48,7 @@ def list_games(db: Session = Depends(get_db)):
     games = (
         db.query(Game)
         .options(joinedload(Game.players).joinedload(GamePlayer.player))
-        .order_by(Game.created_at.desc())
+        .order_by(Game.created_at.desc(), Game.id.desc())
         .all()
     )
     return [_serialize_game(g) for g in games]
@@ -126,6 +126,71 @@ def create_game(data: GameCreate, db: Session = Depends(get_db)):
     db.commit()
 
     # Re-fetch with relationships
+    game = (
+        db.query(Game)
+        .options(joinedload(Game.players).joinedload(GamePlayer.player))
+        .filter(Game.id == game.id)
+        .first()
+    )
+
+    return _serialize_game(game)
+
+
+@router.put("/{game_id}", response_model=GameOut, dependencies=[Depends(require_passcode)])
+def update_game(game_id: int, data: GameCreate, db: Session = Depends(get_db)):
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game:
+        raise HTTPException(404, "Game not found")
+
+    if len(data.missions) != 5:
+        raise HTTPException(400, "Missions list must have exactly 5 entries")
+
+    missions = data.missions
+    successes = sum(1 for m in missions if m == "success")
+    fails = sum(1 for m in missions if m == "fail")
+
+    assassinated_entries = [p for p in data.players if p.is_assassinated]
+    if len(assassinated_entries) > 1:
+        raise HTTPException(400, "Only one player can be assassinated per game")
+    assassinated_entry = assassinated_entries[0] if assassinated_entries else None
+
+    if fails >= 3:
+        winning_team = "evil"
+    elif successes >= 3:
+        if assassinated_entry is None:
+            raise HTTPException(400, "Must specify assassinated player when good wins missions")
+        if assassinated_entry.role == "Merlin":
+            winning_team = "evil"
+        else:
+            winning_team = "good"
+    else:
+        raise HTTPException(400, "At least 3 missions must have resolved (success or fail)")
+
+    game.num_players = data.num_players
+    game.mission_1 = missions[0]
+    game.mission_2 = missions[1]
+    game.mission_3 = missions[2]
+    game.mission_4 = missions[3]
+    game.mission_5 = missions[4]
+    game.winning_team = winning_team
+    game.notes = data.notes
+    if data.created_at:
+        game.created_at = data.created_at
+
+    # Delete existing players and replace
+    db.query(GamePlayer).filter(GamePlayer.game_id == game_id).delete()
+
+    for p in data.players:
+        gp = GamePlayer(
+            game_id=game.id,
+            player_id=p.player_id,
+            role=p.role,
+            is_assassinated=p.is_assassinated,
+        )
+        db.add(gp)
+
+    db.commit()
+
     game = (
         db.query(Game)
         .options(joinedload(Game.players).joinedload(GamePlayer.player))

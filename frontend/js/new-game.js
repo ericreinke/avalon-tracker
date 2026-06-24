@@ -1,6 +1,8 @@
 /** new-game.js — Handle the new game form logic. */
 
 let allPlayers = [];
+let editGameId = null;
+let originalCreatedAt = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!isAuthed()) {
@@ -15,16 +17,71 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load players:', err);
   }
 
-  // Set default date to today in local time
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  document.getElementById('date-played').value = `${yyyy}-${mm}-${dd}`;
+  const params = new URLSearchParams(window.location.search);
+  editGameId = params.get('edit');
 
-  // Start with 5 empty rows
-  for (let i = 0; i < 5; i++) addPlayerRow();
+  if (editGameId) {
+    document.querySelector('.page-header h1').textContent = `Edit Game #${editGameId}`;
+    document.getElementById('submit-btn').textContent = 'Save Changes';
+    await loadGameForEdit(editGameId);
+  } else {
+    // Set default date to today in local time
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    document.getElementById('date-played').value = `${yyyy}-${mm}-${dd}`;
+
+    // Start with 5 empty rows
+    for (let i = 0; i < 5; i++) addPlayerRow();
+  }
 });
+
+async function loadGameForEdit(id) {
+  try {
+    const game = await apiGet(`/api/games/${id}`);
+    
+    // Set Date
+    if (game.created_at) {
+      originalCreatedAt = game.created_at;
+      const d = new Date(game.created_at);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      document.getElementById('date-played').value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    // Set Missions
+    const toggles = document.querySelectorAll('.mission-toggle');
+    game.missions.forEach((m, i) => {
+      if (m) {
+        toggles[i].dataset.state = m;
+        toggles[i].querySelector('span').textContent = STATE_LABELS[m];
+      }
+    });
+    
+    // Set Players
+    game.players.forEach(gp => {
+      const row = addPlayerRow();
+      const selects = row.querySelectorAll('select');
+      selects[0].value = gp.player_id;
+      selects[1].value = gp.role;
+    });
+
+    // Handle Assassination
+    checkAssassinVisibility();
+    if (game.assassinated_id) {
+      document.getElementById('assassinated').value = game.assassinated_id;
+    }
+
+    // Set Notes
+    if (game.notes) document.getElementById('notes').value = game.notes;
+
+  } catch (err) {
+    console.error(err);
+    alert('Failed to load game for editing.');
+  }
+}
 
 /* ── Mission Toggles ──────────────────────────────────── */
 
@@ -93,6 +150,7 @@ function addPlayerRow() {
   row.appendChild(roleSelect);
   row.appendChild(removeBtn);
   container.appendChild(row);
+  return row;
 }
 
 /* ── Assassin Dropdown ────────────────────────────────── */
@@ -170,11 +228,26 @@ async function submitGame() {
     p.is_assassinated = (p.player_id === assassinated_player_id);
   }
 
-  // Parse date correctly as ISO string (adding a fake time so it parses as midnight UTC or local properly)
+  // Handle Date
   const dateStr = document.getElementById('date-played').value;
   let created_at = null;
   if (dateStr) {
-    created_at = new Date(`${dateStr}T12:00:00Z`).toISOString();
+    let origDateStr = null;
+    if (originalCreatedAt) {
+      const d = new Date(originalCreatedAt);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      origDateStr = `${yyyy}-${mm}-${dd}`;
+    }
+
+    if (editGameId && originalCreatedAt && dateStr === origDateStr) {
+      // If we are editing and the user didn't change the date, keep exact precise time
+      created_at = originalCreatedAt;
+    } else {
+      // If new game, or user changed the date, set to noon of that day
+      created_at = new Date(`${dateStr}T12:00:00Z`).toISOString();
+    }
   }
 
   const body = {
@@ -189,11 +262,16 @@ async function submitGame() {
   submitBtn.textContent = 'Saving…';
 
   try {
-    const game = await apiPost('/api/games', body);
+    let game;
+    if (editGameId) {
+      game = await apiPut(`/api/games/${editGameId}`, body);
+    } else {
+      game = await apiPost('/api/games', body);
+    }
     window.location.href = `/game.html?id=${game.id}`;
   } catch (err) {
     errorSpan.textContent = err.message;
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Save Game';
+    submitBtn.textContent = editGameId ? 'Save Changes' : 'Save Game';
   }
 }

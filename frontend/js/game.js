@@ -87,9 +87,18 @@ function renderGame(game) {
       </div>`;
   }
 
+  const authed = isAuthed();
+  const actionsHtml = authed ? `
+    <button class="btn btn-ghost btn-sm" onclick="window.location.href='/new-game.html?edit=${game.id}'" style="margin-left:12px;">Edit</button>
+    <button class="btn btn-ghost btn-sm text-evil" onclick="deleteGame(${game.id})" style="margin-left:8px; border-color:var(--evil-soft);">Delete</button>
+  ` : '';
+
   content.innerHTML = `
     <div class="page-header">
-      <h1>Game #${game.id}</h1>
+      <div style="display:flex; align-items:center;">
+        <h1>Game #${game.id}</h1>
+        ${actionsHtml}
+      </div>
       <p>${date} · ${game.num_players} players</p>
     </div>
 
@@ -111,4 +120,14 @@ function renderGame(game) {
     ${assassinHtml}
     ${notesHtml}
   `;
+}
+
+async function deleteGame(gameId) {
+  if (!confirm('Are you sure you want to delete this game?')) return;
+  try {
+    await apiDelete(`/api/games/${gameId}`);
+    window.location.href = '/';
+  } catch (err) {
+    alert(err.message);
+  }
 }

@@ -57,6 +57,23 @@ function renderCard(game) {
 
   const winnerLabel = game.winning_team === 'good' ? 'Good wins' : 'Evil wins';
 
+  const actionsHtml = isAuthed() ? `
+    <div class="game-card__actions">
+      <button class="game-card__action" onclick="event.preventDefault(); window.location.href='/new-game.html?edit=${game.id}'" title="Edit Game">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"></path>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+        </svg>
+      </button>
+      <button class="game-card__action game-card__action--danger" onclick="deleteGame(event, ${game.id})" title="Delete Game">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+      </button>
+    </div>
+  ` : '';
+
   return `
     <a href="/game.html?id=${game.id}" class="game-card game-card--${iWon ? 'win' : 'loss'}">
       <div class="game-card__result game-card__result--${iWon ? 'win' : 'loss'}">
@@ -71,7 +88,21 @@ function renderCard(game) {
         </div>
       </div>
       <div class="game-card__missions">${pips}</div>
+      ${actionsHtml}
     </a>`;
+}
+
+async function deleteGame(event, gameId) {
+  event.preventDefault();
+  if (!confirm('Are you sure you want to delete this game?')) return;
+  
+  try {
+    await apiDelete(`/api/games/${gameId}`);
+    // Reload feed
+    window.location.reload();
+  } catch (err) {
+    alert(err.message);
+  }
 }
 
 /* ── Auth ──────────────────────────────────────────────── */

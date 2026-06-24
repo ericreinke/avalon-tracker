@@ -137,6 +137,7 @@ a:hover { color: #818cf8; }
   transition: all var(--transition);
   text-decoration: none;
   color: inherit;
+  position: relative;
 }
 
 .game-card:hover {
@@ -176,6 +177,47 @@ a:hover { color: #818cf8; }
   font-size: 0.75rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+}
+
+.game-card__actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+}
+
+.game-card__action {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.game-card__action svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.game-card__action:hover {
+  color: var(--text);
+  border-color: var(--border);
+  background: var(--bg);
+}
+
+.game-card__action--danger:hover {
+  color: var(--evil);
+  border-color: var(--evil);
 }
 
 .game-card__result--win  { background: var(--good-soft); color: var(--good); }
