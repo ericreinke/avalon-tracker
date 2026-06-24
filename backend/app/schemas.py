@@ -32,10 +32,6 @@ class PlayerStats(BaseModel):
     win_rate_percival: Optional[float] = None
     win_rate_morgana: Optional[float] = None
 
-class PlayerProfile(PlayerOut):
-    stats: PlayerStats
-
-
 # ── Games ────────────────────────────────────────────────
 
 class GamePlayerIn(BaseModel):
@@ -71,4 +67,8 @@ class GameOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+class PlayerProfile(PlayerOut):
+    stats: PlayerStats
+    games: list[GameOut]
 

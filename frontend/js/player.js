@@ -29,42 +29,53 @@ function renderPlayer(player) {
   const content = document.getElementById('content');
   const s = player.stats;
 
-  const statCards = [
-    { value: s.games_played, label: 'Games Played', color: '' },
-    { value: formatRate(s.win_rate), label: 'Overall Win Rate', color: '' },
-    { value: formatRate(s.win_rate_good), label: 'Win Rate (Good)', color: 'text-good' },
-    { value: formatRate(s.win_rate_evil), label: 'Win Rate (Evil)', color: 'text-evil' },
-    { value: formatRate(s.win_rate_merlin), label: 'Win Rate (Merlin)', color: 'text-good' },
-    { value: formatRate(s.win_rate_percival), label: 'Win Rate (Percival)', color: 'text-good' },
-    { value: formatRate(s.win_rate_morgana), label: 'Win Rate (Morgana)', color: 'text-evil' },
-  ];
-
-  const statsHtml = statCards.map(c =>
-    `<div class="stat-card">
-      <div class="stat-card__value ${c.color}">${c.value}</div>
-      <div class="stat-card__label">${c.label}</div>
-    </div>`
-  ).join('');
-
-  const joinDate = new Date(player.created_at).toLocaleDateString('en-US', {
-    month: 'long', day: 'numeric', year: 'numeric',
-  });
+  const statsHtml = `
+    <div class="player-text-stats">
+      <div>
+        <span>Games Played: ${s.games_played}</span>
+        <span>Win Rate: ${formatRate(s.win_rate)}</span>
+      </div>
+      <div>
+        <span>Win Rate (Good): ${formatRate(s.win_rate_good)}</span>
+        <span>Win Rate (Merlin): ${formatRate(s.win_rate_merlin)}</span>
+        <span>Win Rate (Percival): ${formatRate(s.win_rate_percival)}</span>
+      </div>
+      <div>
+        <span>Win Rate (Evil): ${formatRate(s.win_rate_evil)}</span>
+        <span>Win Rate (Morgana): ${formatRate(s.win_rate_morgana)}</span>
+      </div>
+    </div>
+  `;
 
   const authed = isAuthed();
   const editBtn = authed
     ? `<button class="btn btn-ghost btn-sm" onclick="openEditModal()" style="margin-left:12px;">Edit</button>`
     : '';
 
+  let gamesHtml = '';
+  if (player.games && player.games.length > 0) {
+    gamesHtml = `
+      <h2 style="margin-top:16px; margin-bottom:16px; font-size:1.25rem;">Game History</h2>
+      <div class="game-grid">
+        ${player.games.map(game => renderCard(game, player.id)).join('')}
+      </div>
+    `;
+  } else {
+    gamesHtml = `
+      <h2 style="margin-top:16px; margin-bottom:16px; font-size:1.25rem;">Game History</h2>
+      <div class="empty-state"><div class="empty-state__text">No games yet.</div></div>
+    `;
+  }
+
   content.innerHTML = `
-    <div class="page-header">
+    <div class="page-header" style="margin-bottom:0;">
       <div style="display:flex; align-items:center;">
         <h1>${player.name} ${player.is_main ? '★' : ''}</h1>
         ${editBtn}
       </div>
-      <p>Joined ${joinDate}</p>
     </div>
-
-    <div class="stats-grid mb-24">${statsHtml}</div>
+    ${statsHtml}
+    ${gamesHtml}
   `;
 }
 

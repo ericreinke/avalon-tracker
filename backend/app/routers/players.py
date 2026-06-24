@@ -5,6 +5,8 @@ from ..database import get_db
 from ..models import Player, GamePlayer, Game
 from ..schemas import PlayerCreate, PlayerUpdate, PlayerOut, PlayerProfile, PlayerStats
 from ..auth import require_passcode
+from .games import _serialize_game
+from ..auth import require_passcode
 
 router = APIRouter(prefix="/api/players", tags=["players"])
 
@@ -49,12 +51,14 @@ def get_player(player_id: int, db: Session = Depends(get_db)):
         db.query(GamePlayer, Game)
         .join(Game, GamePlayer.game_id == Game.id)
         .filter(GamePlayer.player_id == player_id)
+        .order_by(Game.created_at.desc(), Game.id.desc())
         .all()
     )
 
     games_played = len(entries)
+    games_played = len(entries)
     if games_played == 0:
-        return {**_serialize_player(player), "stats": PlayerStats()}
+        return {**_serialize_player(player), "stats": PlayerStats(), "games": []}
 
     def _win_rate(filtered):
         """Given a list of (GamePlayer, Game) tuples, compute win rate."""
@@ -85,7 +89,9 @@ def get_player(player_id: int, db: Session = Depends(get_db)):
         win_rate_morgana=_win_rate(morgana_entries),
     )
 
-    return {**_serialize_player(player), "stats": stats}
+    games_out = [_serialize_game(game) for gp, game in entries]
+
+    return {**_serialize_player(player), "stats": stats, "games": games_out}
 
 
 @router.post("", response_model=PlayerOut, dependencies=[Depends(require_passcode)])
