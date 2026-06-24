@@ -6,14 +6,18 @@ from datetime import datetime
 # ── Players ──────────────────────────────────────────────
 
 class PlayerCreate(BaseModel):
-    name: str
+    first_name: str
+    last_name: str = ""
 
 class PlayerUpdate(BaseModel):
-    name: str
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
 
 class PlayerOut(BaseModel):
     id: int
-    name: str
+    first_name: str
+    last_name: str
+    name: str  # computed display name for convenience
     is_main: bool
     created_at: datetime
 

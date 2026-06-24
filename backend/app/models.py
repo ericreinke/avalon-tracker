@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, ForeignKey, Index, func
 from sqlalchemy.orm import relationship
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from .database import Base
 
@@ -8,11 +9,18 @@ class Player(Base):
     __tablename__ = "players"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), unique=True, nullable=False)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False, server_default="")
     is_main = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     game_entries = relationship("GamePlayer", back_populates="player")
+
+    @hybrid_property
+    def display_name(self):
+        if self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        return self.first_name
 
 
 class Game(Base):

@@ -496,6 +496,31 @@ textarea.form-control {
 .player-link__name { font-weight: 600; }
 .player-link__arrow { color: var(--text-muted); }
 
+.player-link-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.player-link-row .player-link { flex: 1; }
+
+.player-link-row .edit-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+.player-link-row .edit-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
 /* ── Auth Modal ───────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
@@ -532,7 +557,7 @@ textarea.form-control {
   margin-bottom: 16px;
 }
 
-.modal input {
+.modal input[type="password"] {
   width: 100%;
   padding: 10px 14px;
   background: var(--bg-input);
@@ -546,7 +571,7 @@ textarea.form-control {
   margin-bottom: 16px;
 }
 
-.modal input:focus {
+.modal input[type="password"]:focus {
   outline: none;
   border-color: var(--accent);
 }

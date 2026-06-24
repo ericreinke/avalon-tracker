@@ -28,7 +28,8 @@
     <div id="add-player-section" class="detail-section hidden">
       <h2>Add Player</h2>
       <div class="inline-form">
-        <input type="text" id="new-player-name" class="form-control" placeholder="Player name…">
+        <input type="text" id="new-first-name" class="form-control" placeholder="First name…">
+        <input type="text" id="new-last-name" class="form-control" placeholder="Last name (optional)">
         <button class="btn btn-primary btn-sm" onclick="createPlayer()">Add</button>
       </div>
       <span id="add-error" class="text-evil" style="font-size:0.8rem;"></span>
@@ -69,24 +70,30 @@
     }
 
     async function createPlayer() {
-      const nameInput = document.getElementById('new-player-name');
+      const firstInput = document.getElementById('new-first-name');
+      const lastInput = document.getElementById('new-last-name');
       const errorSpan = document.getElementById('add-error');
       errorSpan.textContent = '';
 
-      const name = nameInput.value.trim();
-      if (!name) { errorSpan.textContent = 'Name is required.'; return; }
+      const first_name = firstInput.value.trim();
+      const last_name = lastInput.value.trim();
+      if (!first_name) { errorSpan.textContent = 'First name is required.'; return; }
 
       try {
-        await apiPost('/api/players', { name });
-        nameInput.value = '';
+        await apiPost('/api/players', { first_name, last_name });
+        firstInput.value = '';
+        lastInput.value = '';
         await loadPlayers();
       } catch (err) {
         errorSpan.textContent = err.message;
       }
     }
 
-    // Enter key support
-    document.getElementById('new-player-name').addEventListener('keydown', (e) => {
+    // Enter key support for add form
+    document.getElementById('new-first-name').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') createPlayer();
+    });
+    document.getElementById('new-last-name').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') createPlayer();
     });
   </script>

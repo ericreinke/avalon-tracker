@@ -7,9 +7,10 @@ def seed_main_player(db: Session):
     existing = db.query(Player).filter(Player.is_main == True).first()
     if existing:
         return existing
-    player = Player(name="Main", is_main=True)
+    player = Player(first_name="Main", is_main=True)
     db.add(player)
     db.commit()
     db.refresh(player)
-    print(f"[seed] Created main player: id={player.id}, name={player.name}")
+    print(f"[seed] Created main player: id={player.id}, name={player.first_name}")
     return player
+

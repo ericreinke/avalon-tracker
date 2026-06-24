@@ -23,6 +23,28 @@
     <div class="loading">Loading player</div>
   </main>
 
+  <!-- Edit Player Modal -->
+  <div id="edit-modal" class="modal-overlay">
+    <div class="modal">
+      <h3>Edit Player</h3>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label for="edit-first-name" style="font-size:0.8rem; color:var(--text-muted);">First Name</label>
+          <input type="text" id="edit-first-name" class="form-control" placeholder="First name">
+        </div>
+        <div>
+          <label for="edit-last-name" style="font-size:0.8rem; color:var(--text-muted);">Last Name</label>
+          <input type="text" id="edit-last-name" class="form-control" placeholder="Last name">
+        </div>
+      </div>
+      <span id="edit-error" class="text-evil" style="font-size:0.8rem;"></span>
+      <div style="display:flex; gap:8px; margin-top:16px;">
+        <button class="btn btn-primary" onclick="savePlayerEdit()">Save</button>
+        <button class="btn btn-ghost" onclick="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/api.js"></script>
   <script src="/js/player.js"></script>
 </body>

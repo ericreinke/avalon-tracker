@@ -22,13 +22,13 @@ def _serialize_game(game: Game) -> GameOut:
         players_out.append(GamePlayerOut(
             id=gp.id,
             player_id=gp.player_id,
-            player_name=gp.player.name,
+            player_name=gp.player.display_name,
             role=gp.role,
             is_assassinated=gp.is_assassinated,
         ))
         if gp.is_assassinated:
             assassinated_player_id = gp.player_id
-            assassinated_name = gp.player.name
+            assassinated_name = gp.player.display_name
 
     return GameOut(
         id=game.id,
