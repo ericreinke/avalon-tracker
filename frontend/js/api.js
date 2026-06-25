@@ -119,19 +119,30 @@ function renderCard(game, povPlayerId) {
     </div>
   ` : '';
 
+  const rosterHtml = game.players.map(p => {
+    const firstName = p.player_name.split(' ')[0];
+    return `<div>${firstName}</div>`;
+  }).join('');
+
+  let displayRole = myEntry ? myEntry.role : 'Observer';
+  if (displayRole === 'Loyal Servant') displayRole = 'Servant';
+  if (displayRole === 'Minion of Mordred') displayRole = 'Minion';
+
   return `
-    <a href="/game.html?id=${game.id}" class="game-card game-card--${iWon ? 'win' : 'loss'}">
-      <div class="game-card__result game-card__result--${iWon ? 'win' : 'loss'}">
-        ${iWon ? 'WIN' : 'LOSS'}
-      </div>
-      <div class="game-card__info">
-        <div class="game-card__role">${myEntry ? myEntry.role : 'Observer'}</div>
-        <div class="game-card__meta">
-          <span>${winnerLabel}</span>
-          <span>${game.num_players} players</span>
-          <span>${date}</span>
+    <a href="/game.html?id=${game.id}" class="game-card">
+      <div class="game-card__details">
+        <div class="game-card__date">${date}</div>
+        <div class="game-card__outcome">
+          <span class="game-card__outcome-role">${displayRole}</span>
+          <span class="game-card__outcome-status ${iWon ? 'text-win' : 'text-evil'}">${iWon ? 'WIN' : 'LOSS'}</span>
         </div>
+        <div class="game-card__player-count">${game.num_players} players</div>
       </div>
+      
+      <div class="game-card__roster">
+        ${rosterHtml}
+      </div>
+
       <div class="game-card__missions">${pips}</div>
       ${actionsHtml}
     </a>`;

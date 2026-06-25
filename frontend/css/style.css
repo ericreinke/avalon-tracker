@@ -4,7 +4,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:          #ffffff;
+  --bg:          #fdfbf7;
   --bg-card:     #ffffff;
   --bg-card-hover: #f9fafb;
   --bg-input:    #ffffff;
@@ -28,7 +28,7 @@
 
 html { font-size: 16px; }
 body {
-  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
@@ -51,7 +51,7 @@ a:hover { color: #818cf8; }
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(253, 251, 247, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
@@ -126,13 +126,14 @@ a:hover { color: #818cf8; }
 }
 
 .game-card {
-  background: var(--bg-card);
+  background: #f1f5f9;
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 20px 24px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 16px;
   cursor: pointer;
   transition: all var(--transition);
   text-decoration: none;
@@ -141,43 +142,13 @@ a:hover { color: #818cf8; }
 }
 
 .game-card:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-glow);
+  background: #e2e8f0;
+  border-color: var(--border-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow);
 }
 
-.game-card--win {
-  background: var(--good-soft);
-  border-color: rgba(37, 99, 235, 0.3);
-}
-.game-card--win:hover {
-  background: rgba(37, 99, 235, 0.15);
-  border-color: var(--good);
-}
 
-.game-card--loss {
-  background: var(--evil-soft);
-  border-color: rgba(220, 38, 38, 0.3);
-}
-.game-card--loss:hover {
-  background: rgba(220, 38, 38, 0.15);
-  border-color: var(--evil);
-}
-
-.game-card__result {
-  flex-shrink: 0;
-  width: 56px;
-  height: 56px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
 
 .game-card__actions {
   position: absolute;
@@ -220,34 +191,66 @@ a:hover { color: #818cf8; }
   border-color: var(--evil);
 }
 
-.game-card__result--win  { background: var(--good-soft); color: var(--good); }
-.game-card__result--loss { background: var(--evil-soft); color: var(--evil); }
-
-.game-card__info { flex: 1; min-width: 0; }
-
-.game-card__role {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 4px;
+.game-card__details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 140px;
 }
 
-.game-card__meta {
-  font-size: 0.8rem;
+.game-card__date {
+  font-size: 0.7rem;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.game-card__player-count {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.game-card__outcome {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.game-card__outcome-status {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.game-card__outcome-role {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.game-card__roster {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.2;
 }
 
 .game-card__missions {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   flex-shrink: 0;
+  margin-right: 40px;
 }
 
 .mission-pip {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -424,7 +427,9 @@ textarea.form-control {
 .mission-toggles {
   display: flex;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px; /* Space for a potential scrollbar */
 }
 
 .mission-toggle {
@@ -648,6 +653,7 @@ textarea.form-control {
 
 .text-good { color: var(--good); }
 .text-evil { color: var(--evil); }
+.text-win { color: #16a34a; }
 
 .mb-8  { margin-bottom: 8px; }
 .mb-16 { margin-bottom: 16px; }
