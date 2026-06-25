@@ -1,4 +1,15 @@
 services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://avalon:avalon@db:5432/avalon
+      # Tell FastAPI it is hosted at a subpath so it generates correct URLs
+      - ROOT_PATH=/avalon 
+    depends_on:
+      - db
+
   db:
     image: postgres:16-alpine
     environment:

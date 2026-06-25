@@ -143,24 +143,31 @@ a:hover { color: #818cf8; }
 
 .game-card:hover {
   background: #e2e8f0;
-  border-color: var(--border-hover);
   transform: translateY(-2px);
   box-shadow: var(--shadow);
+}
+
+.game-card--win {
+  border-left: 6px solid #16a34a;
+}
+
+.game-card--loss {
+  border-left: 6px solid var(--evil);
 }
 
 
 
 .game-card__actions {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 8px;
+  right: 8px;
   display: flex;
-  gap: 6px;
+  gap: 4px;
 }
 
 .game-card__action {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,8 +180,8 @@ a:hover { color: #818cf8; }
 }
 
 .game-card__action svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   stroke: currentColor;
   stroke-width: 2;
   fill: none;
@@ -233,19 +240,26 @@ a:hover { color: #818cf8; }
 
 .game-card__roster {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex: 1;
-  gap: 2px;
+  gap: 16px;
+  justify-content: center;
   font-size: 0.75rem;
   color: var(--text-muted);
   line-height: 1.2;
+}
+
+.roster-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .game-card__missions {
   display: flex;
   gap: 4px;
   flex-shrink: 0;
-  margin-right: 40px;
+  margin-right: 16px;
 }
 
 .mission-pip {

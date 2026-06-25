@@ -119,9 +119,13 @@ function renderCard(game, povPlayerId) {
     </div>
   ` : '';
 
-  const rosterHtml = game.players.map(p => {
-    const firstName = p.player_name.split(' ')[0];
-    return `<div>${firstName}</div>`;
+  const firstNames = game.players.map(p => p.player_name.split(' ')[0]);
+  const chunks = [];
+  for (let i = 0; i < firstNames.length; i += 5) {
+    chunks.push(firstNames.slice(i, i + 5));
+  }
+  const rosterHtml = chunks.map(chunk => {
+    return `<div class="roster-col">` + chunk.map(n => `<div>${n}</div>`).join('') + `</div>`;
   }).join('');
 
   let displayRole = myEntry ? myEntry.role : 'Observer';
@@ -129,7 +133,7 @@ function renderCard(game, povPlayerId) {
   if (displayRole === 'Minion of Mordred') displayRole = 'Minion';
 
   return `
-    <a href="/game.html?id=${game.id}" class="game-card">
+    <a href="/game.html?id=${game.id}" class="game-card game-card--${iWon ? 'win' : 'loss'}">
       <div class="game-card__details">
         <div class="game-card__date">${date}</div>
         <div class="game-card__outcome">
