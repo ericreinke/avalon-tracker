@@ -5,6 +5,8 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://avalon:avalon@db:5432/avalon
+    env_file:
+      - .env
     depends_on:
       - db
 
